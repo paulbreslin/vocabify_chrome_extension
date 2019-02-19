@@ -1,0 +1,38 @@
+{
+    "manifest_version": 2,
+    "name": "Vocabify",
+    "description": "Improve your vocabulary. Add words to Vocabify with one click.",
+    "version": "2.0.0",
+    "browser_action": {
+        "default_icon": "icon48.png",
+        "default_title": "Vocabify"
+    },
+    "content_scripts": [
+        {
+            "matches": ["http://*/*", "https://*/*"],
+            "js": ["contentscript.js"]
+        }
+    ],
+    "background": {
+        "scripts": ["eventpage.js"],
+        "persistent": false
+    },
+    "externally_connectable": {
+        "ids": ["kfflofdchiheamgnkdipdkhlbcecbnge"],
+        "matches": ["https://*.vocabifyapp.com/*"]
+    },
+    "icons": {
+        "16": "icon16.png",
+        "48": "icon48.png",
+        "128": "icon256.png",
+        "256": "icon256.png"
+    },
+    "permissions": [
+        "storage",
+        "tabs",
+        "contextMenus",
+        "notifications",
+        "http://*/*",
+        "https://*/*"
+    ]
+}
