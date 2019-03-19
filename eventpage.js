@@ -1,3 +1,9 @@
+// Init Sentry
+Sentry.init({
+	dsn: 'https://96e555de31d14beca54976d68cf6de9a@sentry.io/1419202'
+});
+
+// Init Firebase
 const firebaseConfig = {
 	apiKey: 'AIzaSyBwTk_erRP-kFLroaPA-lQZeaC4ZU6HSXk',
 	authDomain: 'vocabify.firebaseapp.com',
@@ -12,7 +18,6 @@ firebase.firestore().settings({ timestampsInSnapshots: false });
 
 firebase.auth().onAuthStateChanged(async user => {
 	if (user && user.uid) {
-		// Init listener for words
 		initReviewCount(user.uid);
 	}
 });
@@ -26,25 +31,30 @@ initReviewCount = uid => {
 		.collection('users')
 		.doc(uid)
 		.collection('words')
-		.onSnapshot(({ docs }) => {
-			// Runs whenever words collection changes
-			const wordsPendingReview = docs
-				.map(doc => ({ ...doc.data(), id: doc.id }))
-				.filter(({ word }) => word)
-				.filter(({ word }) => word !== 'Vocabify')
-				.filter(({ reviewDate }) =>
-					dateFns.isBefore(reviewDate, dateFns.endOfToday())
-				);
-			const { length } = wordsPendingReview;
-			chrome.storage.local.get(['badgeLastClicked'], result => {
-				const { badgeLastClicked } = result;
-				if (!dateFns.isToday(badgeLastClicked)) {
-					chrome.browserAction.setBadgeText({
-						text: length ? `${length}` : ''
-					});
-				}
-			});
-		});
+		.onSnapshot(
+			({ docs }) => {
+				// Runs whenever words collection changes
+				const wordsPendingReview = docs
+					.map(doc => ({ ...doc.data(), id: doc.id }))
+					.filter(({ word }) => word)
+					.filter(({ word }) => word !== 'Vocabify')
+					.filter(({ reviewDate }) =>
+						dateFns.isBefore(reviewDate, dateFns.endOfToday())
+					);
+				const { length } = wordsPendingReview;
+				chrome.storage.local.get(['badgeLastClicked'], result => {
+					const { badgeLastClicked } = result;
+					if (!dateFns.isToday(badgeLastClicked)) {
+						chrome.browserAction.setBadgeText({
+							text: length ? `${length}` : ''
+						});
+					}
+				});
+			},
+			error => {
+				Sentry.captureException(error);
+			}
+		);
 };
 
 // Opens Vocabify on install
@@ -102,6 +112,7 @@ async function addWord(uid, word) {
 			message: `An unexpected error occurred`,
 			iconUrl: 'icon256.png'
 		});
+		Sentry.captureException(error);
 	}
 }
 
@@ -110,14 +121,14 @@ chrome.runtime.onMessageExternal.addListener(async ({ uid }) => {
 	if (uid) {
 		chrome.storage.local.set({ uid });
 
-		const tokenResponse = await fetch(
-			`${cloudFunctionURL}/createCustomToken?uid=${uid}`
-		);
-		const { token } = await tokenResponse.json();
 		try {
+			const tokenResponse = await fetch(
+				`${cloudFunctionURL}/createCustomToken?uid=${uid}`
+			);
+			const { token } = await tokenResponse.json();
 			await firebase.auth().signInWithCustomToken(token);
 		} catch (error) {
-			// TODO - Report to Sentry
+			Sentry.captureException(error);
 		}
 	}
 });
