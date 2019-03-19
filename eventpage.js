@@ -1,3 +1,52 @@
+const firebaseConfig = {
+	apiKey: 'AIzaSyBwTk_erRP-kFLroaPA-lQZeaC4ZU6HSXk',
+	authDomain: 'vocabify.firebaseapp.com',
+	databaseURL: 'https://vocabify.firebaseio.com',
+	projectId: 'vocabify'
+};
+
+const cloudFunctionURL = 'https://us-central1-vocabify.cloudfunctions.net';
+
+firebase.initializeApp(firebaseConfig);
+firebase.firestore().settings({ timestampsInSnapshots: false });
+
+firebase.auth().onAuthStateChanged(async user => {
+	if (user && user.uid) {
+		// Init listener for words
+		initReviewCount(user.uid);
+	}
+});
+
+// Adds number of words to review to Chrome extension icon
+initReviewCount = uid => {
+	chrome.browserAction.setBadgeBackgroundColor({ color: '#704616' });
+
+	firebase
+		.firestore()
+		.collection('users')
+		.doc(uid)
+		.collection('words')
+		.onSnapshot(({ docs }) => {
+			// Runs whenever words collection changes
+			const wordsPendingReview = docs
+				.map(doc => ({ ...doc.data(), id: doc.id }))
+				.filter(({ word }) => word)
+				.filter(({ word }) => word !== 'Vocabify')
+				.filter(({ reviewDate }) =>
+					dateFns.isBefore(reviewDate, dateFns.endOfToday())
+				);
+			const { length } = wordsPendingReview;
+			chrome.storage.local.get(['badgeLastClicked'], result => {
+				const { badgeLastClicked } = result;
+				if (!dateFns.isToday(badgeLastClicked)) {
+					chrome.browserAction.setBadgeText({
+						text: length ? `${length}` : ''
+					});
+				}
+			});
+		});
+};
+
 // Opens Vocabify on install
 chrome.runtime.onInstalled.addListener(details => {
 	if (details.reason == 'install') {
@@ -14,7 +63,14 @@ chrome.contextMenus.create({
 
 // Registers handlers to open Vocabify site
 chrome.notifications.onClicked.addListener(() => openVocabify());
-chrome.browserAction.onClicked.addListener(() => openVocabify());
+chrome.browserAction.onClicked.addListener(() => {
+	chrome.browserAction.setBadgeText({ text: '' });
+	// Hides badge count for today when clicked
+	chrome.storage.local.set({
+		badgeLastClicked: Date.now()
+	});
+	openVocabify();
+});
 
 // Saves word
 async function addWord(uid, word) {
@@ -24,7 +80,7 @@ async function addWord(uid, word) {
 	};
 
 	try {
-		await fetch('https://us-central1-vocabify.cloudfunctions.net/addWord', {
+		await fetch(`${cloudFunctionURL}/addWord`, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -50,9 +106,19 @@ async function addWord(uid, word) {
 }
 
 // After logging in to https://vocabifyapp.com, the User ID (UID) is sent to this extension via a restricted Chrome messaging API
-chrome.runtime.onMessageExternal.addListener(({ uid }) => {
+chrome.runtime.onMessageExternal.addListener(async ({ uid }) => {
 	if (uid) {
 		chrome.storage.local.set({ uid });
+
+		const tokenResponse = await fetch(
+			`${cloudFunctionURL}/createCustomToken?uid=${uid}`
+		);
+		const { token } = await tokenResponse.json();
+		try {
+			await firebase.auth().signInAndRetrieveDataWithCustomToken(token);
+		} catch (error) {
+			// TODO - Report to Sentry
+		}
 	}
 });
 
