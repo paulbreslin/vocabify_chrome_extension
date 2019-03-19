@@ -19,6 +19,8 @@ firebase.firestore().settings({ timestampsInSnapshots: false });
 firebase.auth().onAuthStateChanged(async user => {
 	if (user && user.uid) {
 		initReviewCount(user.uid);
+	} else {
+		chrome.browserAction.setBadgeText({ text: '' });
 	}
 });
 
