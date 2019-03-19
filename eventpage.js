@@ -115,7 +115,7 @@ chrome.runtime.onMessageExternal.addListener(async ({ uid }) => {
 		);
 		const { token } = await tokenResponse.json();
 		try {
-			await firebase.auth().signInAndRetrieveDataWithCustomToken(token);
+			await firebase.auth().signInWithCustomToken(token);
 		} catch (error) {
 			// TODO - Report to Sentry
 		}
