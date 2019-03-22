@@ -69,6 +69,11 @@ chrome.runtime.onInstalled.addListener(details => {
 	});
 });
 
+// Opens feedback form on install
+chrome.runtime.setUninstallURL(
+	'https://docs.google.com/forms/d/e/1FAIpQLSdpbWCab6QBnZa7oepkveWzSbTNgEq0A1x5Uv1cedZlc30w1Q/viewform'
+);
+
 // Adds 'Add to Vocabify' to right-click menu
 chrome.contextMenus.create({
 	title: 'Add to Vocabify',
