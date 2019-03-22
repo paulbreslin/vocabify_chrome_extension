@@ -64,6 +64,9 @@ chrome.runtime.onInstalled.addListener(details => {
 	if (details.reason == 'install') {
 		openVocabify();
 	}
+	chrome.storage.local.set({
+		hasExtension: true
+	});
 });
 
 // Adds 'Add to Vocabify' to right-click menu
