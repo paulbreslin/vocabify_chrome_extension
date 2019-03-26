@@ -18,14 +18,43 @@ firebase.firestore().settings({ timestampsInSnapshots: false });
 
 firebase.auth().onAuthStateChanged(async user => {
 	if (user && user.uid) {
-		initReviewCount(user.uid);
+		initWords(user.uid);
 	} else {
 		chrome.browserAction.setBadgeText({ text: '' });
 	}
 });
 
-// Adds number of words to review to Chrome extension icon
-initReviewCount = uid => {
+const updateBadgeReviewCount = words => {
+	const { length: wordsPendingReview } = words.filter(({ reviewDate }) =>
+		dateFns.isBefore(reviewDate, dateFns.endOfToday())
+	);
+	chrome.storage.local.get(['badgeLastClicked'], result => {
+		const { badgeLastClicked } = result;
+		if (!dateFns.isToday(badgeLastClicked)) {
+			chrome.browserAction.setBadgeText({
+				text: wordsPendingReview ? `${wordsPendingReview}` : ''
+			});
+		}
+	});
+};
+
+const showWordCard = words => {
+	const mostRecentWord = words[0];
+	chrome.storage.local.get(['lastWordCount'], ({ lastWordCount }) => {
+		if (!lastWordCount || lastWordCount < words.length) {
+			chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+				chrome.tabs.sendMessage(tabs[0].id, {
+					word: mostRecentWord
+				});
+			});
+		}
+		chrome.storage.local.set({
+			lastWordCount: words.length
+		});
+	});
+};
+
+const initWords = uid => {
 	chrome.browserAction.setBadgeBackgroundColor({ color: '#704616' });
 
 	firebase
@@ -33,25 +62,17 @@ initReviewCount = uid => {
 		.collection('users')
 		.doc(uid)
 		.collection('words')
+		.orderBy('dateAdded', 'desc')
 		.onSnapshot(
 			({ docs }) => {
 				// Runs whenever words collection changes
-				const wordsPendingReview = docs
+				const words = docs
 					.map(doc => ({ ...doc.data(), id: doc.id }))
 					.filter(({ word }) => word)
-					.filter(({ word }) => word !== 'Vocabify')
-					.filter(({ reviewDate }) =>
-						dateFns.isBefore(reviewDate, dateFns.endOfToday())
-					);
-				const { length } = wordsPendingReview;
-				chrome.storage.local.get(['badgeLastClicked'], result => {
-					const { badgeLastClicked } = result;
-					if (!dateFns.isToday(badgeLastClicked)) {
-						chrome.browserAction.setBadgeText({
-							text: length ? `${length}` : ''
-						});
-					}
-				});
+					.filter(({ word }) => word !== 'Vocabify');
+
+				updateBadgeReviewCount(words);
+				showWordCard(words);
 			},
 			error => {
 				Sentry.captureException(error);
@@ -64,9 +85,6 @@ chrome.runtime.onInstalled.addListener(details => {
 	if (details.reason == 'install') {
 		openVocabify();
 	}
-	chrome.storage.local.set({
-		hasExtension: true
-	});
 });
 
 // Opens feedback form on install
@@ -76,13 +94,12 @@ chrome.runtime.setUninstallURL(
 
 // Adds 'Add to Vocabify' to right-click menu
 chrome.contextMenus.create({
-	title: 'Add to Vocabify',
+	title: 'Look up with Vocabify',
 	id: '1000',
 	contexts: ['selection', 'editable']
 });
 
 // Registers handlers to open Vocabify site
-chrome.notifications.onClicked.addListener(() => openVocabify());
 chrome.browserAction.onClicked.addListener(() => {
 	chrome.browserAction.setBadgeText({ text: '' });
 	// Hides badge count for today when clicked
@@ -107,13 +124,6 @@ async function addWord(uid, word) {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(wordData)
-		});
-
-		chrome.notifications.create({
-			type: 'basic',
-			title: `'${word}' added to Vocabify`,
-			message: 'Click to view the definition',
-			iconUrl: 'icon256.png'
 		});
 	} catch (error) {
 		chrome.notifications.create({
