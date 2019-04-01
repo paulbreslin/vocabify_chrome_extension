@@ -1,0 +1,22 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	],
+	"linters":
+	{
+		"eslint":
+		{
+			"disable": true
+		},
+		"flow":
+		{
+			"disable": true
+		}
+	},
+	"prettier_options": {
+    "trailingComma": true
+  }
+}

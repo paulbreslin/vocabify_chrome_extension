@@ -1,0 +1,91 @@
+.wordCard {
+  all: initial;
+  * {
+    all: unset;
+  }
+}
+
+.wordCard {
+  padding: 16px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  font-family: 'Rasa', serif;
+  background: #ffeade;
+  max-width: 340px;
+  width: 100%;
+  min-width: 320px;
+  text-align: left;
+  display: inline-block;
+  vertical-align: top;
+  position: fixed;
+  top: 32px;
+  right: 32px;
+  z-index: 9999999;
+}
+
+@media (min-width: 767px) {
+  .wordCard {
+    max-width: 400px;
+  }
+}
+
+.wordCardTitle {
+  font-size: 22px;
+  margin: 0;
+  padding: 0;
+}
+
+.loading {
+  font-size: 0.9rem;
+  color: #626262;
+  margin: 8px 0 0;
+  padding: 0;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.removeIcon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.index {
+  position: absolute;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.definition {
+  font-size: 16px;
+  padding-left: 24px;
+  line-height: 22px;
+  margin: 8px 0 0;
+}
+
+.example {
+  font-size: 16px;
+  margin: 0;
+  color: #626262;
+  padding-left: 24px;
+  line-height: 22px;
+}
+
+.origin {
+  font-family: 'Open Sans', sans-serif;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: #626262;
+  padding: 0;
+  margin: 24px 0 8px;
+  display: block;
+}
+
+.originText {
+  font-size: 14px;
+}
