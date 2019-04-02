@@ -17,9 +17,9 @@ const WordCard = ({
 }: WordCardProps) => {
     return (
         <div className={styles.wordCard}>
-            <span onClick={onCloseClick} className={styles.removeIcon}>
-                &times;
-            </span>
+            <div onClick={onCloseClick} className={styles.removeIcon}>
+                <div>&times;</div>
+            </div>
             <span className={styles.wordCardTitle}>{word}</span>
             <span />
             {isDefinitionLoading ? (
