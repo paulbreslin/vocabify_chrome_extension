@@ -43,10 +43,26 @@ class App extends React.Component<any, any> {
     });
   }
 
+  public onSetTimer = (timeout = this.hoverTimeout) => {
+    this.timerId = setTimeout(() => {
+      this.setState({
+        showWord: false
+      });
+    }, this.hoverTimeout);
+  };
+
   public onCloseClick = () =>
     this.setState({
       showWord: false
     });
+
+  public onMouseEnter = () => {
+    clearTimeout(this.timerId);
+  };
+
+  public onMouseLeave = () => {
+    this.onSetTimer(5000);
+  };
 
   public render() {
     const { showWord, word, definitionList, isDefinitionLoading } = this.state;
@@ -54,12 +70,14 @@ class App extends React.Component<any, any> {
     if (!showWord) return null;
 
     return (
-      <WordCard
-        word={word}
-        definitionList={definitionList}
-        isDefinitionLoading={isDefinitionLoading}
-        onCloseClick={this.onCloseClick}
-      />
+      <div onMouseLeave={this.onMouseLeave} onMouseEnter={this.onMouseEnter}>
+        <WordCard
+          word={word}
+          definitionList={definitionList}
+          isDefinitionLoading={isDefinitionLoading}
+          onCloseClick={this.onCloseClick}
+        />
+      </div>
     );
   }
 }
