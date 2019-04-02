@@ -16,7 +16,4 @@
 			"disable": true
 		}
 	},
-	"prettier_options": {
-    "trailingComma": true
-  }
 }
