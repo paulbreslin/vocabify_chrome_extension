@@ -36,6 +36,7 @@
   padding: 0;
 }
 
+.notFound,
 .loading {
   font-size: 13px;
   color: #626262;
