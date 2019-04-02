@@ -72,7 +72,6 @@ const initWords = uid => {
 					.filter(({ word }) => word !== 'Vocabify');
 
 				updateBadgeReviewCount(words);
-				showWordCard(words);
 			},
 			error => {
 				Sentry.captureException(error);
@@ -116,8 +115,16 @@ async function addWord(uid, word) {
 		uid
 	};
 
+	// Sends word
+	chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+		chrome.tabs.sendMessage(tabs[0].id, {
+			word,
+			isDefinitionLoading: true
+		});
+	});
+
 	try {
-		await fetch(`${cloudFunctionURL}/addWord`, {
+		const addWordRequest = await fetch(`${cloudFunctionURL}/addWord`, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -125,6 +132,18 @@ async function addWord(uid, word) {
 			},
 			body: JSON.stringify(wordData)
 		});
+
+		const definitionList = await addWordRequest.json();
+
+		// Sends word and definition
+		chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				word,
+				definitionList,
+				isDefinitionLoading: false
+			});
+		});
+		// TODO - Handle definition not found
 	} catch (error) {
 		chrome.notifications.create({
 			type: 'basic',
