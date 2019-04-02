@@ -37,7 +37,7 @@
 }
 
 .loading {
-  font-size: 14px;
+  font-size: 13px;
   color: #626262;
   margin: 8px 0 0;
   padding: 0;
@@ -60,41 +60,4 @@
 
 .removeIcon:hover {
   color: black;
-}
-
-.index {
-  position: absolute;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.definition {
-  font-size: 16px;
-  padding-left: 24px;
-  line-height: 22px;
-  margin: 8px 0 0;
-}
-
-.example {
-  font-size: 16px;
-  margin: 0;
-  color: #626262;
-  padding-left: 24px;
-  line-height: 22px;
-}
-
-.origin {
-  font-family: 'Open Sans', sans-serif;
-  text-transform: uppercase;
-  font-weight: 600;
-  font-size: 11px;
-  letter-spacing: 0.5px;
-  color: #626262;
-  padding: 0;
-  margin: 24px 0 8px;
-  display: block;
-}
-
-.originText {
-  font-size: 14px;
 }

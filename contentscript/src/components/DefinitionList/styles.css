@@ -15,9 +15,9 @@
 
 .definition {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 16px;
   padding-left: 24px;
-  line-height: 1.4rem;
+  line-height: 22px;
 }
 
 .notSet {
@@ -29,10 +29,10 @@
 }
 
 .example {
-  font-size: 1.1rem;
   margin: 0;
-  color: #626262;
+  font-size: 16px;
   padding-left: 24px;
-  line-height: 1.4rem;
+  line-height: 22px;
   white-space: pre-wrap;
+  color: #626262;
 }
