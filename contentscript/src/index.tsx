@@ -20,9 +20,18 @@ class App extends React.Component<any, any> {
     word: ''
   };
 
+  public hoverTimeout = 8000;
+
   public componentDidMount() {
     chrome.runtime.onMessage.addListener((request: ChromeMessageRequest) => {
       const { word, definitionList, isDefinitionLoading } = request;
+
+      const { isDefinitionLoading: prevLoadingState } = this.state;
+
+      if (prevLoadingState && !isDefinitionLoading) {
+        this.onSetTimer();
+      }
+
       if (request) {
         this.setState({
           definitionList,
