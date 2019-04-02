@@ -38,22 +38,6 @@ const updateBadgeReviewCount = words => {
 	});
 };
 
-const showWordCard = words => {
-	const mostRecentWord = words[0];
-	chrome.storage.local.get(['lastWordCount'], ({ lastWordCount }) => {
-		if (!lastWordCount || lastWordCount < words.length) {
-			chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-				chrome.tabs.sendMessage(tabs[0].id, {
-					word: mostRecentWord
-				});
-			});
-		}
-		chrome.storage.local.set({
-			lastWordCount: words.length
-		});
-	});
-};
-
 const initWords = uid => {
 	chrome.browserAction.setBadgeBackgroundColor({ color: '#704616' });
 
@@ -143,7 +127,6 @@ async function addWord(uid, word) {
 				isDefinitionLoading: false
 			});
 		});
-		// TODO - Handle definition not found
 	} catch (error) {
 		chrome.notifications.create({
 			type: 'basic',
