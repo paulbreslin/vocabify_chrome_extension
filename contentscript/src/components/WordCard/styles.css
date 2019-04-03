@@ -62,3 +62,38 @@
 .removeIcon:hover {
   color: black;
 }
+
+.actions {
+  text-align: right;
+  margin-top: 16px;
+}
+
+.actions a {
+  all: unset;
+  text-decoration: none;
+}
+
+.wordCard button,
+.wordCard button:hover {
+  all: unset;
+}
+
+.wordCard button.open {
+  font-family: 'Open Sans', sans-serif;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 600;
+  border: 0;
+  background: 0;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 2px;
+  color: #704616;
+  box-shadow: 0;
+}
+
+.wordCard button.open:hover {
+  background: rgba(157, 103, 91, 0.1);
+  box-shadow: 0;
+}

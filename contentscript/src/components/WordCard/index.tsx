@@ -32,6 +32,15 @@ const WordCard = ({
         <div className={styles.loading}>Searching for definition...</div>
       )}
       <DefinitionList definitionList={fullDefinitionList} />
+      <div className={styles.actions}>
+        <a
+          href="https://vocabifyapp.com/words"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <button className={styles.open}>Open Vocabify</button>
+        </a>
+      </div>
     </div>
   );
 };
