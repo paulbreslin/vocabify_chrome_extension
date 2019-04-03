@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@babel/polyfill": "^7.4.0",
+    "@sentry/browser": "^5.0.3",
     "@types/react": "^16.8.10",
     "@types/react-dom": "^16.8.3",
     "babel-polyfill": "^6.26.0",

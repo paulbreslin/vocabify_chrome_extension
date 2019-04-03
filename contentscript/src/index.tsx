@@ -1,9 +1,14 @@
 import 'babel-polyfill';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import * as Sentry from '@sentry/browser';
 
 import WordCard from './components/WordCard/index.tsx';
 import './index.css';
+
+Sentry.init({
+  dsn: 'https://96e555de31d14beca54976d68cf6de9a@sentry.io/1419202'
+});
 
 declare const chrome: any;
 
