@@ -31,9 +31,15 @@ class App extends React.Component<any, any> {
     chrome.runtime.onMessage.addListener((request: ChromeMessageRequest) => {
       const { word, definitionList, isDefinitionLoading } = request;
 
-      const { isDefinitionLoading: prevLoadingState } = this.state;
+      const {
+        isDefinitionLoading: prevLoadingState,
+        word: prevWord
+      } = this.state;
 
-      if (prevLoadingState && !isDefinitionLoading) {
+      if (
+        (prevLoadingState && !isDefinitionLoading) ||
+        (prevLoadingState === isDefinitionLoading && prevWord !== word)
+      ) {
         this.onSetTimer();
       }
 
@@ -49,6 +55,8 @@ class App extends React.Component<any, any> {
   }
 
   public onSetTimer = (timeout = this.hoverTimeout) => {
+    clearTimeout(this.timerId);
+
     this.timerId = setTimeout(() => {
       this.setState({
         showWord: false
