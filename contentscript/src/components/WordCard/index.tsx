@@ -34,7 +34,7 @@ const WordCard = ({
       <DefinitionList definitionList={fullDefinitionList} />
       <div className={styles.actions}>
         <a
-          href="https://vocabifyapp.com/words"
+          href="https://vocabifyapp.com/words?signIn=true"
           target="_blank"
           rel="noopener noreferrer"
         >
