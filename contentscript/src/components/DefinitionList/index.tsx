@@ -62,9 +62,6 @@ class DefinitionList extends PureComponent {
     ) {
       return null;
     }
-    if (!this.definitionList.length) {
-      return <div className={styles.notSet}>No definition set</div>;
-    }
     return (
       <div className={styles.definitionList}>{this.renderDefinitionList()}</div>
     );
