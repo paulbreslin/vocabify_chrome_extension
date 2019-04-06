@@ -159,9 +159,8 @@ chrome.runtime.onMessageExternal.addListener(async ({ uid }) => {
 // If user not logged in, opens site
 chrome.contextMenus.onClicked.addListener(({ selectionText }) => {
 	chrome.storage.local.get(['uid'], result => {
-		const { uid } = result;
-		if (uid) {
-			addWord(uid, selectionText);
+		if (result.uid) {
+			addWord(result.uid, selectionText);
 		} else {
 			openVocabify();
 		}
