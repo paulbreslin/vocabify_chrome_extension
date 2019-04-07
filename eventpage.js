@@ -18,14 +18,27 @@ firebase.firestore().settings({ timestampsInSnapshots: false });
 
 firebase.auth().onAuthStateChanged(async user => {
 	if (user && user.uid) {
-		initReviewCount(user.uid);
+		initWords(user.uid);
 	} else {
 		chrome.browserAction.setBadgeText({ text: '' });
 	}
 });
 
-// Adds number of words to review to Chrome extension icon
-initReviewCount = uid => {
+const updateBadgeReviewCount = words => {
+	const { length: wordsPendingReview } = words.filter(({ reviewDate }) =>
+		dateFns.isBefore(reviewDate, dateFns.endOfToday())
+	);
+	chrome.storage.local.get(['badgeLastClicked'], result => {
+		const { badgeLastClicked } = result;
+		if (!dateFns.isToday(badgeLastClicked)) {
+			chrome.browserAction.setBadgeText({
+				text: wordsPendingReview ? `${wordsPendingReview}` : ''
+			});
+		}
+	});
+};
+
+const initWords = uid => {
 	chrome.browserAction.setBadgeBackgroundColor({ color: '#704616' });
 
 	firebase
@@ -33,25 +46,16 @@ initReviewCount = uid => {
 		.collection('users')
 		.doc(uid)
 		.collection('words')
+		.orderBy('dateAdded', 'desc')
 		.onSnapshot(
 			({ docs }) => {
 				// Runs whenever words collection changes
-				const wordsPendingReview = docs
+				const words = docs
 					.map(doc => ({ ...doc.data(), id: doc.id }))
 					.filter(({ word }) => word)
-					.filter(({ word }) => word !== 'Vocabify')
-					.filter(({ reviewDate }) =>
-						dateFns.isBefore(reviewDate, dateFns.endOfToday())
-					);
-				const { length } = wordsPendingReview;
-				chrome.storage.local.get(['badgeLastClicked'], result => {
-					const { badgeLastClicked } = result;
-					if (!dateFns.isToday(badgeLastClicked)) {
-						chrome.browserAction.setBadgeText({
-							text: length ? `${length}` : ''
-						});
-					}
-				});
+					.filter(({ word }) => word !== 'Vocabify');
+
+				updateBadgeReviewCount(words);
 			},
 			error => {
 				Sentry.captureException(error);
@@ -62,11 +66,8 @@ initReviewCount = uid => {
 // Opens Vocabify on install
 chrome.runtime.onInstalled.addListener(details => {
 	if (details.reason == 'install') {
-		openVocabify();
+		openVocabify('&recentInstall=true');
 	}
-	chrome.storage.local.set({
-		hasExtension: true
-	});
 });
 
 // Opens feedback form on install
@@ -76,13 +77,12 @@ chrome.runtime.setUninstallURL(
 
 // Adds 'Add to Vocabify' to right-click menu
 chrome.contextMenus.create({
-	title: 'Add to Vocabify',
+	title: 'Look up with Vocabify',
 	id: '1000',
 	contexts: ['selection', 'editable']
 });
 
 // Registers handlers to open Vocabify site
-chrome.notifications.onClicked.addListener(() => openVocabify());
 chrome.browserAction.onClicked.addListener(() => {
 	chrome.browserAction.setBadgeText({ text: '' });
 	// Hides badge count for today when clicked
@@ -99,8 +99,16 @@ async function addWord(uid, word) {
 		uid
 	};
 
+	// Sends word
+	chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+		chrome.tabs.sendMessage(tabs[0].id, {
+			word,
+			isDefinitionLoading: true
+		});
+	});
+
 	try {
-		await fetch(`${cloudFunctionURL}/addWord`, {
+		const addWordRequest = await fetch(`${cloudFunctionURL}/addWord`, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -109,11 +117,15 @@ async function addWord(uid, word) {
 			body: JSON.stringify(wordData)
 		});
 
-		chrome.notifications.create({
-			type: 'basic',
-			title: `'${word}' added to Vocabify`,
-			message: 'Click to view the definition',
-			iconUrl: 'icon256.png'
+		const definitionList = await addWordRequest.json();
+
+		// Sends word and definition
+		chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, {
+				word,
+				definitionList,
+				isDefinitionLoading: false
+			});
 		});
 	} catch (error) {
 		chrome.notifications.create({
@@ -147,9 +159,8 @@ chrome.runtime.onMessageExternal.addListener(async ({ uid }) => {
 // If user not logged in, opens site
 chrome.contextMenus.onClicked.addListener(({ selectionText }) => {
 	chrome.storage.local.get(['uid'], result => {
-		const { uid } = result;
-		if (uid) {
-			addWord(uid, selectionText);
+		if (result.uid) {
+			addWord(result.uid, selectionText);
 		} else {
 			openVocabify();
 		}
@@ -157,5 +168,7 @@ chrome.contextMenus.onClicked.addListener(({ selectionText }) => {
 });
 
 // Opens Vocabify site
-const openVocabify = () =>
-	chrome.tabs.create({ url: 'https://vocabifyapp.com/words?signIn=true' });
+const openVocabify = (extraParams = '') =>
+	chrome.tabs.create({
+		url: `https://vocabifyapp.com/words?signIn=true${extraParams}`
+	});

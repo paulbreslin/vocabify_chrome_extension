@@ -1,0 +1,21 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "linters": {
+    "eslint": {
+      "disable": true
+    },
+    "flow": {
+      "disable": true
+    }
+  },
+  "settings": {
+    "js_prettier": {
+      "tabWidth": 2,
+      "translate_tabs_to_spaces": true
+    }
+  }
+}

@@ -1,0 +1,99 @@
+.wordCard {
+  all: initial;
+  * {
+    all: unset;
+  }
+}
+
+.wordCard {
+  padding: 16px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  font-family: 'Rasa', serif;
+  background: #ffeade;
+  max-width: 340px;
+  width: 100%;
+  min-width: 320px;
+  text-align: left;
+  display: inline-block;
+  vertical-align: top;
+  position: fixed;
+  top: 32px;
+  right: 32px;
+  z-index: 9999999;
+}
+
+@media (min-width: 767px) {
+  .wordCard {
+    max-width: 400px;
+  }
+}
+
+.wordCardTitle {
+  font-size: 22px;
+  margin: 0;
+  padding: 0;
+}
+
+.notFound,
+.loading {
+  font-size: 13px;
+  color: #626262;
+  margin: 8px 0 0;
+  padding: 0;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.removeIcon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  color: #626262;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.removeIcon:hover {
+  color: black;
+}
+
+.actions {
+  text-align: right;
+  margin-top: 16px;
+}
+
+.actions a {
+  all: unset;
+  text-decoration: none;
+}
+
+.wordCard button,
+.wordCard button:hover {
+  all: unset;
+}
+
+.wordCard button.open {
+  font-family: 'Open Sans', sans-serif;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 600;
+  border: 0;
+  background: 0;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 2px;
+  color: #704616;
+  box-shadow: 0;
+}
+
+.wordCard button.open:hover {
+  background: rgba(157, 103, 91, 0.1);
+  box-shadow: 0;
+}
