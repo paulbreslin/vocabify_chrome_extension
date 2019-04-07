@@ -17,7 +17,7 @@
 .env.test.local
 .env.production.local
 manifest.json
-/dist
+/contentscript/dist
 contentscript.js
 
 npm-debug.log*
