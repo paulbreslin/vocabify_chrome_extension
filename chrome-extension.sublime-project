@@ -10,5 +10,7 @@
       "translate_tabs_to_spaces": true
     },
     "SublimeLinter.linters.tslint.args":["--config", "${folder}/contentscript/tslint.json"],
+    "SublimeLinter.linters.eslint.disable": true,
+    "SublimeLinter.linters.flow.disable": true
   }
 }
