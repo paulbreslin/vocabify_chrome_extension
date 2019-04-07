@@ -95,11 +95,16 @@ class App extends React.Component<any, any> {
   }
 }
 
-const extensionContainer = document.createElement('div');
-extensionContainer.id = 'vocabify-chrome-extension';
-document.body.appendChild(extensionContainer);
-ReactDOM.render(<App />, document.getElementById('vocabify-chrome-extension'));
+window.onload = function() {
+  const extensionContainer = document.createElement('div');
+  extensionContainer.id = 'vocabify-chrome-extension';
+  document.body.appendChild(extensionContainer);
+  ReactDOM.render(
+    <App />,
+    document.getElementById('vocabify-chrome-extension')
+  );
 
-const isInstalledNode = document.createElement('div');
-isInstalledNode.id = 'vocabify-extension-is-installed';
-document.body.appendChild(isInstalledNode);
+  const isInstalledNode = document.createElement('div');
+  isInstalledNode.id = 'vocabify-extension-is-installed';
+  document.body.appendChild(isInstalledNode);
+};
