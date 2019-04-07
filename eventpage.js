@@ -66,7 +66,7 @@ const initWords = uid => {
 // Opens Vocabify on install
 chrome.runtime.onInstalled.addListener(details => {
 	if (details.reason == 'install') {
-		openVocabify();
+		openVocabify('&recentInstall=true');
 	}
 });
 
@@ -168,5 +168,7 @@ chrome.contextMenus.onClicked.addListener(({ selectionText }) => {
 });
 
 // Opens Vocabify site
-const openVocabify = () =>
-	chrome.tabs.create({ url: 'https://vocabifyapp.com/words?signIn=true' });
+const openVocabify = (extraParams = '') =>
+	chrome.tabs.create({
+		url: `https://vocabifyapp.com/words?signIn=true${extraParams}`
+	});
