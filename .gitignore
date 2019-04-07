@@ -19,6 +19,7 @@
 manifest.json
 /contentscript/dist
 contentscript.js
+*.sublime-workspace
 
 npm-debug.log*
 yarn-debug.log*
