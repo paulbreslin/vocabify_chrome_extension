@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import AudioPronunciation from '../AudioPronunciation/index.tsx';
 import DefinitionList from '../DefinitionList/index.tsx';
 import * as styles from './styles.css';
 
@@ -24,7 +25,10 @@ const WordCard = ({
       <div onClick={onCloseClick} className={styles.removeIcon}>
         <div>&times;</div>
       </div>
-      <span className={styles.wordCardTitle}>{word}</span>
+      <span className={styles.wordCardTitle}>
+        {word}
+        <AudioPronunciation definitions={fullDefinitionList} />
+      </span>
       {showNotFound && (
         <div className={styles.notFound}>No definition found</div>
       )}

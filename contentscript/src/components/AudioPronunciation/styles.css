@@ -1,0 +1,11 @@
+.audioIcon {
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  height: 16px;
+  opacity: 0.5;
+  cursor: pointer;
+  padding: 5px 8px;
+}
+
+.audioIcon:hover {
+  opacity: 0.8;
+}
