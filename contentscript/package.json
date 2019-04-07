@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "check-types": "npx tsc",
-    "build": "webpack",
+    "build": "webpack && cp dist/main.js ../contentscript.js",
     "watch": "webpack --watch"
   },
   "keywords": [],
