@@ -5,11 +5,19 @@
     }
   ],
   "settings": {
+    "translate_tabs_to_spaces": true,
+    "detect_indentation": false,
     "js_prettier": {
-      "tabWidth": 2,
-      "translate_tabs_to_spaces": true
+      // Doesn't resolve path from local node_modules directory
+      "prettier_cli_path": "~/.nvm/versions/node/v11.13.0/bin/prettier",
+      "node_path": "~/.nvm/versions/node/v11.13.0/bin/node",
+      "auto_format_on_save": true,
+      "singleQuote": false
     },
-    "SublimeLinter.linters.tslint.args":["--config", "${folder}/contentscript/tslint.json"],
+    "SublimeLinter.linters.tslint.args": [
+      "--config",
+      "${folder}/contentscript/tslint.json"
+    ],
     "SublimeLinter.linters.eslint.disable": true,
     "SublimeLinter.linters.flow.disable": true
   }
