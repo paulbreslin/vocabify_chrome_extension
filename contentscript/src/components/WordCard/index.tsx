@@ -1,20 +1,22 @@
-import * as React from 'react';
+import * as React from "react";
 
-import AudioPronunciation from '../AudioPronunciation/index.tsx';
-import DefinitionList from '../DefinitionList/index.tsx';
-import * as styles from './styles.css';
+import AudioPronunciation from "../AudioPronunciation/index.tsx";
+import DefinitionList from "../DefinitionList/index.tsx";
+import * as styles from "./styles.css";
 
 interface WordCardProps {
   word: string;
   onCloseClick: () => void;
   isDefinitionLoading: boolean;
+  showTimer: boolean;
 }
 
 const WordCard = ({
   word,
   definitionList: fullDefinitionList,
   isDefinitionLoading,
-  onCloseClick
+  onCloseClick,
+  showTimer
 }: WordCardProps) => {
   const showNotFound =
     Array.isArray(fullDefinitionList) &&
@@ -45,6 +47,7 @@ const WordCard = ({
           <button className={styles.open}>Open Vocabify</button>
         </a>
       </div>
+      {showTimer && <div className={styles.timer} />}
     </div>
   );
 };

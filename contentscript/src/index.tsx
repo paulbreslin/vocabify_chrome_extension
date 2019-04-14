@@ -1,13 +1,13 @@
-import 'babel-polyfill';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import * as Sentry from '@sentry/browser';
+import "babel-polyfill";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import * as Sentry from "@sentry/browser";
 
-import WordCard from './components/WordCard/index.tsx';
-import './index.css';
+import WordCard from "./components/WordCard/index.tsx";
+import "./index.css";
 
 Sentry.init({
-  dsn: 'https://96e555de31d14beca54976d68cf6de9a@sentry.io/1419202'
+  dsn: "https://96e555de31d14beca54976d68cf6de9a@sentry.io/1419202"
 });
 
 declare const chrome: any;
@@ -22,10 +22,12 @@ class App extends React.Component<any, any> {
     definitionList: [],
     isDefinitionLoading: false,
     showWord: false,
-    word: ''
+    word: "",
+    showTimer: false
   };
 
   public hoverTimeout = 8000;
+  // TODO - Keep consistent with css animation timer
 
   public componentDidMount() {
     chrome.runtime.onMessage.addListener((request: ChromeMessageRequest) => {
@@ -54,12 +56,16 @@ class App extends React.Component<any, any> {
     });
   }
 
-  public onSetTimer = (timeout = this.hoverTimeout) => {
+  public onSetTimer = () => {
     clearTimeout(this.timerId);
+    this.setState({
+      showTimer: true
+    });
 
     this.timerId = setTimeout(() => {
       this.setState({
-        showWord: false
+        showWord: false,
+        showTimer: false
       });
     }, this.hoverTimeout);
   };
@@ -71,14 +77,23 @@ class App extends React.Component<any, any> {
 
   public onMouseEnter = () => {
     clearTimeout(this.timerId);
+    this.setState({
+      showTimer: false
+    });
   };
 
   public onMouseLeave = () => {
-    this.onSetTimer(5000);
+    this.onSetTimer();
   };
 
   public render() {
-    const { showWord, word, definitionList, isDefinitionLoading } = this.state;
+    const {
+      showWord,
+      word,
+      definitionList,
+      isDefinitionLoading,
+      showTimer
+    } = this.state;
 
     if (!showWord) return null;
 
@@ -89,6 +104,7 @@ class App extends React.Component<any, any> {
           definitionList={definitionList}
           isDefinitionLoading={isDefinitionLoading}
           onCloseClick={this.onCloseClick}
+          showTimer={showTimer}
         />
       </div>
     );
@@ -96,15 +112,15 @@ class App extends React.Component<any, any> {
 }
 
 window.onload = function() {
-  const extensionContainer = document.createElement('div');
-  extensionContainer.id = 'vocabify-chrome-extension';
+  const extensionContainer = document.createElement("div");
+  extensionContainer.id = "vocabify-chrome-extension";
   document.body.appendChild(extensionContainer);
   ReactDOM.render(
     <App />,
-    document.getElementById('vocabify-chrome-extension')
+    document.getElementById("vocabify-chrome-extension")
   );
 
-  const isInstalledNode = document.createElement('div');
-  isInstalledNode.id = 'vocabify-extension-is-installed';
+  const isInstalledNode = document.createElement("div");
+  isInstalledNode.id = "vocabify-extension-is-installed";
   document.body.appendChild(isInstalledNode);
 };
