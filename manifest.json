@@ -1,0 +1,49 @@
+{
+  "update_url": "https://clients2.google.com/service/update2/crx",
+
+  "manifest_version": 2,
+  "name": "Vocabify",
+  "description": "Stop forgetting word meanings. Look up once and remember forever.",
+  "version": "2.4.2",
+  "browser_action": {
+    "default_icon": "icon48.png",
+    "default_title": "Vocabify"
+  },
+  "content_security_policy": "script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'",
+  "background": {
+    "scripts": [
+      "sentry.min.js",
+      "date_fns.min.js",
+      "firebase-app.js",
+      "firebase-auth.js",
+      "firebase-firestore.js",
+      "eventpage.js"
+    ],
+    "persistent": true
+  },
+  "externally_connectable": {
+    "ids": ["kfflofdchiheamgnkdipdkhlbcecbnge"],
+    "matches": ["https://*.vocabifyapp.com/*", "http://localhost:4000/*"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["contentscript.js"]
+    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon256.png",
+    "256": "icon256.png"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "contextMenus",
+    "notifications",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0XNejDFwq11/W6uQHmN6HBmh7GTI6BjZe1GTc1EX1sxTLSe1F0iX0IvI+2EjIEoNTi//LcxH1YPRK4n+Gg0Vj/kWp6hCnrt/paKOHJ/xuoFsQKgfiUnDnblI/lc5iF1FBAz/x/IuHfvasAVvvGwS5asvkQO/+jMhi1FSFGk6+KoFzSXPAz//p8p2Z7R+pvxhuwieUy1Qa3cv/GimOPkhcmJZral6lnltp2T6w4h70jyyWtG9XteUKy5BVo0XhQ4WMLoeZZY0oOeB5n+m//8WecqCgfMjYvMobYy0z74uTQJ+KjoP23As2VUB4d18feGBM3e1nl5yInq9KmVKGQpn2wIDAQAB"
+}
