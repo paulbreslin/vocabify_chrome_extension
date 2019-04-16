@@ -4,7 +4,7 @@
   "manifest_version": 2,
   "name": "Vocabify",
   "description": "Stop forgetting word meanings. Look up once and remember forever.",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "browser_action": {
     "default_icon": "icon48.png",
     "default_title": "Vocabify"
